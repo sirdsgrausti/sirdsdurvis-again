@@ -1,0 +1,37 @@
+{"frames": {
+
+"pridle.png":
+{
+	"frame": {"x":0,"y":0,"w":19,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":32},
+	"sourceSize": {"w":19,"h":32}
+},
+"prwalk1.png":
+{
+	"frame": {"x":19,"y":0,"w":19,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":32},
+	"sourceSize": {"w":19,"h":32}
+},
+"prwalk2.png":
+{
+	"frame": {"x":38,"y":0,"w":19,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":32},
+	"sourceSize": {"w":19,"h":32}
+
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "praytellsheet.png",
+	"format": "RGBA8888",
+	"size": {"w":57,"h":32},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:25e08f38bf8a8a83daef62aa8fe0ad77:4fd91fce2665d1137edcb402e855150a:cd212b300f119d0fbb83f7e46ceafbe8$"
+}
+}
