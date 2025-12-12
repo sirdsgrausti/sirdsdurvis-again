@@ -2,7 +2,7 @@ import pygame
 
 class HUD:
     def __init__(self, life_icon_path):
-        self.life_img = pygame.image.load(life_icon_path)
+        self.life_img = pygame.image.load(life_icon_path) # cute little variable that gives us image we put in main.py, i made it customisab;e
         self.life_img = pygame.transform.scale(self.life_img, (32, 32))
 
     def draw_lives(self, surface, lives):
