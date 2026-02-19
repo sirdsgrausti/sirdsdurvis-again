@@ -17,10 +17,10 @@ screen = pygame.display.set_mode((1200, 800), pygame.RESIZABLE)
 clock = pygame.time.Clock()
 running = True
 pygame.display.set_caption("III: Summer Stench")
-icon = pygame.image.load("life.png")
+icon = pygame.image.load("assets/life.png")
 pygame.display.set_icon(icon)
 
-tree = pygame.image.load("fetterforestfrag.png")
+tree = pygame.image.load("assets/fetterforestfrag.png")
 surface = pygame.Surface((screen.get_width(), screen.get_height())) # needed for displaying fonts and images
 
 #creatures

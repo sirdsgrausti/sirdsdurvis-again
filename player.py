@@ -5,15 +5,16 @@ class Player(pygame.sprite.Sprite): # player class inherits sprite properties
     def __init__(self):
         pygame.sprite.Sprite.__init__(self) # init for the thing to know it's a spite
         self.LEFT_KEY, self.RIGHT_KEY, self.FACING_LEFT = False, False, False
+        self.ST_POS = 8
         self.is_jumping, self.on_ground = False, False # trackers for the state og the sprite/if he touches the grund
         self.gravity, self.friction = 0.35, -0.12 # physics
         self.load_frames()
         self.rect = self.idle_frames_right[0].get_rect()
-        self.rect.midbottom = (8, 8)# we don't need this
         self.current_frame = 0           # this is for animation - tracks which frame it is
         self.last_updated = 0
-        self.position, self.velocity = pygame.math.Vector2(0,0), pygame.math.Vector2(0,0)
-        self.acceleration = pygame.math.Vector2(0, self.gravity) #
+        self.position, self.velocity = pygame.math.Vector2(self.ST_POS, self.ST_POS), pygame.math.Vector2(0,0)
+        self.rect.midbottom = (self.ST_POS, self.ST_POS)# we don't need this
+        self.acceleration = pygame.math.Vector2(0, self.gravity)
         self.state = 'idle'
         self.current_image = self.idle_frames_right[0] # more animation init sstuff
 
@@ -99,7 +100,7 @@ class Player(pygame.sprite.Sprite): # player class inherits sprite properties
             self.state = 'moving left'
 ## make her move and actually ppear on the screen
     def animate(self):
-        chrspritesheet = Spritesheet('praytellsheet.png')
+        chrspritesheet = Spritesheet('assets/praytellsheet.png')
         gg = chrspritesheet.parse_sprite("pridle.png")
         gg1 = pygame.transform.flip(gg, True, False)
         now = pygame.time.get_ticks()
@@ -121,7 +122,7 @@ class Player(pygame.sprite.Sprite): # player class inherits sprite properties
                     self.current_image = self.walking_frames_right[self.current_frame]
 
     def load_frames(self):      #learnd to use a spritesheet an d a json thing for it
-        chrspritesheet = Spritesheet('praytellsheet.png')
+        chrspritesheet = Spritesheet('assets/praytellsheet.png')
         gg = chrspritesheet.parse_sprite("pridle.png")
         gg1 = pygame.transform.flip(gg, True, False)
         self.idle_frames_right = [chrspritesheet.parse_sprite("pridle.png"),

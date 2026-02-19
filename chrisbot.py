@@ -6,7 +6,7 @@ class Bot(pygame.sprite.Sprite): # player class inherits sprite properties
         self.LEFT_KEY, self.RIGHT_KEY, self.FACING_LEFT = False, False, False
         self.is_jumping, self.on_ground = False, False # trackers for the state og the sprite/if he touches the grund
         self.gravity, self.friction = 0.35, -0.12 # physics
-        self.image = pygame.image.load("chrisstar.png")
+        self.image = pygame.image.load("assets/chrisstar.png")
         self.rect = self.image.get_rect()
         # self.rect.midbottom = (8, 8)# we don't need this
         self.current_frame = 0           # this is for animation - tracks which frame it is
@@ -51,8 +51,6 @@ class Bot(pygame.sprite.Sprite): # player class inherits sprite properties
             self.is_jumping = True
             self.velocity.y -= 17    # defines the jumping state & velocity ""pulling him down"""
             self.on_ground = False
-
-#collision testing (didn't work, fixed it, had a blast)
 
     def get_hits(self, tiles):
         hits = []

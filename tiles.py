@@ -1,8 +1,5 @@
 import pygame, csv, os
-from coin import Coin
-from goal import Goal
-from enemy import Enemy
-# i got rid of all the kooky comments again (i thought they made it lag but apparently not...)
+from npcs import *
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, image, x, y, spritesheet):
@@ -35,7 +32,7 @@ class TileMap():
             self.map_width, self.map_height = max_x, max_y
 
     def read_csv(self, filename):
-        map_data = []
+        map_data = [] # this reads the csv and turn the stuff there into a list to use later
         with open(os.path.join(filename)) as data:
             reader = csv.reader(data, delimiter=',')
             for row in reader:
@@ -43,11 +40,11 @@ class TileMap():
         return map_data
 
     def load_tiles(self, filename):
-        tiles = []
-        self.coins = []
+        tiles = []             # BEIDZOT ATRADU MASĪVUS YAY
+        self.coins = [] 
         self.goals = []
         self.enemies = []
-        map_data = self.read_csv(filename)
+        map_data = self.read_csv(filename) # turns into a list
         y = 0
         for row in map_data:
             x = 0
@@ -57,7 +54,7 @@ class TileMap():
                 if tile == '1':  
                     tiles.append(Tile('grass.png', tx, ty, self.spritesheet))
                 elif tile == '2':
-                    tiles.append(Tile('grass2.png', tx, ty, self.spritesheet))
+                    tiles.append(Tile('grass2.png', tx, ty, self.spritesheet))  # lietosim APPEND!! galā pieliek to ko redz no iekavam
                 elif tile == '3':
                     self.coins.append(Coin(tx + 6, ty + 6)) # these are different becuase theyŗe overlaid on the map
                 elif tile == '4':

@@ -1,9 +1,8 @@
 import pygame
+# import partner
 from tiles import *
 from spritesheet import Spritesheet
-# from player import Player   unnecessary here - testing the floatier Bot class
-from partner import Partner
-from hud import HUD
+from npcs import *
 from chrisbot import Bot
 
 class Game:
@@ -12,8 +11,8 @@ class Game:
         self.DISPLAY_W, self.DISPLAY_H = 1200, 800
         self.canvas = pygame.Surface((1920, 1080))
         self.window = pygame.display.set_mode((self.DISPLAY_W, self.DISPLAY_H), pygame.RESIZABLE)
-        self.bg = pygame.image.load("lowkeybg.jpg")
-        icon = pygame.image.load("chrisstar.png")
+        self.bg = pygame.image.load("assets/lowkeybg.jpg")
+        icon = pygame.image.load("assets/chrisstar.png")
         pygame.display.set_icon(icon)
         pygame.display.set_caption("Sirdsdurvis v3")
         self.clock = pygame.time.Clock()
@@ -61,14 +60,12 @@ class Game:
 
             title = self.title_font.render("C R E D I T S", True, "white")
             credit1 = self.small_font.render("Game by Terēze Saule", True, "cornsilk") # because this is my own chaos
-            credit2 = self.small_font.render("Supported by DP, KC, and MS", True, "cornsilk") # they each added a line of code or a suggestion
-            credit3 = self.small_font.render("Inspired by the work of Chris Cornell", True, "cornsilk") # you know what? don't ask.
+            credit2 = self.small_font.render("Inspired by the work of Chris Cornell", True, "cornsilk") # you know what? don't ask.
             backtext = self.small_font.render("Press ESC to go back", True, "cornsilk")
 
             self.canvas.blit(title, (self.DISPLAY_W//2 - title.get_width()//2, 150))  # funky centering metho dthing
             self.canvas.blit(credit1, (self.DISPLAY_W//2 - credit1.get_width()//2, 300))
-            # self.canvas.blit(credit2, (self.DISPLAY_W//2 - credit2.get_width()//2, 360)) we don't need to use this yet
-            self.canvas.blit(credit3, (self.DISPLAY_W//2 - credit3.get_width()//2, 420))
+            self.canvas.blit(credit2, (self.DISPLAY_W//2 - credit2.get_width()//2, 360))
             self.canvas.blit(backtext, (self.DISPLAY_W//2 - backtext.get_width()//2, 600))
 
             for event in pygame.event.get():
@@ -86,15 +83,15 @@ class Game:
     def play(self):
         spritesheet = Spritesheet('nnnn.png')
         player = Bot()
-        partner = Partner()
+        # partner = Partner()
         tile_map = TileMap("yeurgh.csv", spritesheet)#('branchlev.csv', spritesheet)
         player.position.x = player.position.y = 80
-        partner.position.x = partner.position.y = 160
+        # partner.position.x = partner.position.y = 160
         player.rect.x = player.rect.y = 80
-        partner.rect.x = partner.rect.y = 160
+        # partner.rect.x = partner.rect.y = 160
         player.coins = 0
-        partner.coins = 0
-        partner.lives = 12
+        # partner.coins = 0
+        # partner.lives = 12
         player.lives = 12
         hud = HUD("life.png")
         coins = tile_map.coins
@@ -113,7 +110,7 @@ class Game:
 
             tile_map.draw_map(self.canvas, offset_x=-camera_x, offset_y=-camera_y)
             player.draw(self.canvas, offset_x=-camera_x, offset_y=-camera_y)
-            partner.draw(self.canvas, offset_x=-camera_x, offset_y=-camera_y)
+            # partner.draw(self.canvas, offset_x=-camera_x, offset_y=-camera_y)
 
             for c in coins:
                 c.draw(self.canvas, offset_x=-camera_x, offset_y=-camera_y)
@@ -132,19 +129,19 @@ class Game:
             # Update physics
             dt = self.clock.tick(60) * 0.001 * 60
             player.update(dt, tile_map.tiles)
-            partner.update(dt, tile_map.tiles)
+            # partner.update(dt, tile_map.tiles)
 
             # HIT THIS FLOOR< AND YOU"RE DEAD!!!
             if player.rect.top > tile_map.map_height + 200:
                 player.lives -= 1
-                partner.lives -=1   ###removes a life for each of them
+                # partner.lives -=1   ###removes a life for each of them
                 if player.lives <= 0:
                     self.state = "menu"
                 else:
                     player.rect.x = player.rect.y = 80
                     player.position.x = player.position.y = 80
-                    partner.rect.x = partner.rect.y = 160
-                    partner.position.x = partner.position.y = 160
+                    # partner.rect.x = partner.rect.y = 160
+                    # partner.position.x = partner.position.y = 160
 
             # if partner.rect.top > tile_map.map_height + 200:
             #     partner.lives -= 1
@@ -160,33 +157,31 @@ class Game:
                 if player.rect.colliderect(c.rect):
                     coins.remove(c)
                     player.coins += 1
-                    partner.coins +=1
+                    # partner.coins +=1
 
-                if partner.rect.colliderect(c.rect):
-                    coins.remove(c)
-                    partner.coins +=1
-                    player.coins +=1
+                # if partner.rect.colliderect(c.rect):
+                #     coins.remove(c)
+                #     # partner.coins +=1
+                #     player.coins +=1
 
-            # eenemies that don't really do much except swoop around
-            for e in enemies:
-                if player.rect.colliderect(e.rect):
-                    player.lives -= 1
-                    if player.lives <= 0:
-                        self.state = "menu"
-                    else:
-                        player.rect.x = player.rect.y = 80
-                if partner.rect.colliderect(e.rect):
-                    partner.lives -= 1
-                    if partner.lives <= 0:
-                        self.state = "menu"
-                    else:
-                        partner.rect.x = partner.rect.y = 160
+            # # eenemies that don't really do much except swoop around
+            # for e in enemies:
+            #     if player.rect.colliderect(e.rect):
+            #         player.lives -= 1
+            #         if player.lives <= 0:
+            #             self.state = "menu"
+            #         else:
+            #             player.rect.x = player.rect.y = 80
+            #     # if partner.rect.colliderect(e.rect):
+                #     partner.lives -= 1
+                #     if partner.lives <= 0:
+                #         self.state = "menu"
+                #     else:
+                #         partner.rect.x = partner.rect.y = 160
                 
-                    
-
             # goalpost, of which there are many
             for g in goals:
-                if player.rect.colliderect(g.rect):
+                if player.rect.colliderect(g.rect): #or partner.rect.colliderect(g.rect):
                     print("Level complete!")
                     self.state = "menu"  #  partner can't win for main, and i didn; t add any goalposts in the csv for this one :-(
 
@@ -207,22 +202,22 @@ class Game:
                     elif event.key == pygame.K_RIGHT:
                         player.RIGHT_KEY = False
 
-                if event.type == pygame.KEYDOWN:     # partner uses wadsd
-                    if event.key == pygame.K_a:
-                        partner.LEFT_KEY = True
-                    elif event.key == pygame.K_d:
-                        partner.RIGHT_KEY = True
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_a:
-                        partner.LEFT_KEY = False
-                    elif event.key == pygame.K_d:
-                        partner.RIGHT_KEY = False
+                # if event.type == pygame.KEYDOWN:     # partner uses wadsd
+                #     if event.key == pygame.K_a:
+                #         partner.LEFT_KEY = True
+                #     elif event.key == pygame.K_d:
+                #         partner.RIGHT_KEY = True
+                # if event.type == pygame.KEYUP:
+                #     if event.key == pygame.K_a:
+                #         partner.LEFT_KEY = False
+                #     elif event.key == pygame.K_d:
+                #         partner.RIGHT_KEY = False
 ############## why are these out here? don't ask me. i had no idea where to put them
             if pygame.key.get_pressed()[pygame.K_UP]:
                 player.jump() # keeping this besause it's nice and itr works so y not
 
-            if pygame.key.get_pressed()[pygame.K_w]:
-                partner.jump() # keeping this besause it's nice and itr works so y not
+            # if pygame.key.get_pressed()[pygame.K_w]:
+            #     partner.jump() # keeping this besause it's nice and itr works so y not
 
             self.window.blit(self.canvas, (0, 0))
             pygame.display.update()

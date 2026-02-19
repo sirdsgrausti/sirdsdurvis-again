@@ -99,7 +99,7 @@ class Partner(pygame.sprite.Sprite): # player class inherits sprite properties
             self.state = 'moving left'
 ## make her move and actually ppear on the screen
     def animate(self):
-        chrspritesheet = Spritesheet('stellasheet.png')
+        chrspritesheet = Spritesheet('assets/stellasheet.png')
         gg = chrspritesheet.parse_sprite("stidle.png")
         gg1 = pygame.transform.flip(gg, True, False)
         now = pygame.time.get_ticks()
@@ -121,7 +121,7 @@ class Partner(pygame.sprite.Sprite): # player class inherits sprite properties
                     self.current_image = self.walking_frames_right[self.current_frame]
 
     def load_frames(self):      #learnd to use a spritesheet an d a json thing for it
-        chrspritesheet = Spritesheet('stellasheet.png')
+        chrspritesheet = Spritesheet('assets/stellasheet.png')
         gg = chrspritesheet.parse_sprite("stidle.png")
         # gg1 = pygame.transform.flip(gg, True, False)
         self.idle_frames_right = [chrspritesheet.parse_sprite("stidle.png"),
