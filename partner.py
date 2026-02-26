@@ -2,7 +2,7 @@ import pygame
 from spritesheet import Spritesheet
 from player import Player
 
-class Partner(Player):   # yeyeyeye finally stopped being scared of super().__init__()!!
+class Partner(Player):   # yeyeyeye finally stopped being scared of super().__init__()!! evem though i used it before like half a semester ago
     def __init__(self):
         super().__init__()
         self.ST_POS = 16

@@ -4,6 +4,7 @@ from spritesheet import Spritesheet
 from player import Player
 from npcs import *
 from partner import Partner
+from cutscenebutton import SpeakerBox
 
 START_POS_PL = (0,0)
 START_POS_PA = (8, 0)
@@ -22,6 +23,7 @@ class Game:
         self.title_font = pygame.font.SysFont("Cambria", 100, True)
         self.menu_font = pygame.font.SysFont("Cambria", 60)
         self.small_font = pygame.font.SysFont("Cambria", 40)
+        self.chara_font = pygame.font.SysFont("Cambria", 28)
         pygame.display.set_icon(icon)
         pygame.display.set_caption("HENAGONOMETRY")
    
@@ -88,6 +90,9 @@ class Game:
         partner = Partner()
         tile_map = TileMap("branchlev.csv", spritesheet)
 
+        dialogue = SpeakerBox(100, (self.DISPLAY_H - 220), (self.DISPLAY_W - 200), 180, self.chara_font)
+        dialactive = False
+
         player.position.x, player.position.y = START_POS_PL
         player.rect.midbottom = START_POS_PL
         player.velocity.xy = (0, 0)
@@ -123,7 +128,10 @@ class Game:
 
             hud.draw_lives(self.canvas, player.lives)
             hud.draw_coins(self.canvas, player.coins)
-
+            
+            if dialactive:
+                dialogue.draw(self.canvas)
+            
             dt = self.clock.tick(60) / 1000
 
             player.update(dt, tile_map.tiles)
@@ -176,6 +184,17 @@ class Game:
                         partner.LEFT_KEY = False
                     elif event.key == pygame.K_d:
                         partner.RIGHT_KEY = False
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_e:
+                        # import chrialogue
+                        dialactive = True
+                        dialogue.speakerchoice(1)
+                        dialogue.textset("In the example below, the year 2019 should be a variable, and passed into the Student class when creating student objects. To do so, add another parameter in the __init__() function:")
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN and dialactive:
+                        dialactive = False        
 
             keys = pygame.key.get_pressed()
             if keys[pygame.K_UP]:
