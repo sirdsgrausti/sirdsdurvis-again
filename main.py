@@ -1,5 +1,5 @@
 import pygame
-from tiles import *
+from tilemaps.tiles import *
 from spritesheet import Spritesheet
 from player import Player
 from npcs import *
@@ -25,13 +25,13 @@ class Game:
         self.small_font = pygame.font.SysFont("Cambria", 40)
         self.chara_font = pygame.font.SysFont("Cambria", 28)
         pygame.display.set_icon(icon)
-        pygame.display.set_caption("HENAGONOMETRY")
+        pygame.display.set_caption("H")
    
     def menu(self):
         self.canvas.fill((0, 0, 0))
         self.canvas.blit(self.bg, (0,0))
 
-        title = self.title_font.render("HENAGONOMETRY", True, "white")
+        title = self.title_font.render("H", True, "white")
         start_text = self.menu_font.render("Press ENTER to Start", True, "cornsilk")
         credits_text = self.menu_font.render("Press C for Credits", True, "cornsilk")
         quit_text = self.menu_font.render("Press ESC to Quit", True,"cornsilk")
@@ -61,10 +61,10 @@ class Game:
         self.canvas.fill("navy")
         self.canvas.blit(self.bg, (0,0))
 
-        title = self.title_font.render("C R E D I T S", True, "white")
-        credit1 = self.small_font.render("Game by Terēze Saule", True, "cornsilk")
-        credit2 = self.small_font.render("placeholder text", True, "cornsilk")
-        credit3 = self.small_font.render("Inspired by the work of Chris Cornell", True, "cornsilk")
+        title = self.title_font.render("CREDITS", True, "white")
+        credit1 = self.small_font.render("Game by Saule", True, "cornsilk")
+        credit2 = self.small_font.render("Supported by Kārlis Cīmurs and Dāvids Paičs (kinda)", True, "cornsilk")
+        credit3 = self.small_font.render("Certified Clanker-Free as of v17/04/26", True, "cornsilk")
         backtext = self.small_font.render("Press C to go back", True, "cornsilk")
 
         self.canvas.blit(title, (self.DISPLAY_W//2 - title.get_width()//2, 150))
@@ -88,7 +88,7 @@ class Game:
         spritesheet = Spritesheet('nnnn.png')
         player = Player()
         partner = Partner()
-        tile_map = TileMap("branchlev.csv", spritesheet)
+        tile_map = TileMap("tilemaps/branchlev.csv", spritesheet)
 
         dialogue = SpeakerBox(100, (self.DISPLAY_H - 220), (self.DISPLAY_W - 200), 180, self.chara_font)
         dialactive = False
@@ -175,6 +175,17 @@ class Game:
                         partner.LEFT_KEY = True
                     elif event.key == pygame.K_d:
                         partner.RIGHT_KEY = True
+
+                    if event.key == pygame.K_e:
+                        import SpareParts.stellalogue
+                        dialactive = True
+                        dialogue.speakerchoice(1)
+                        bub = "post1"
+                        dialogue.textset(SpareParts.stellalogue.stellaspeech[bub])
+                        
+                    if event.key == pygame.K_RETURN and dialactive:
+                        dialactive = False        
+
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT:
                         player.LEFT_KEY = False
@@ -184,17 +195,6 @@ class Game:
                         partner.LEFT_KEY = False
                     elif event.key == pygame.K_d:
                         partner.RIGHT_KEY = False
-
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_e:
-                        # import chrialogue
-                        dialactive = True
-                        dialogue.speakerchoice(1)
-                        dialogue.textset("In the example below, the year 2019 should be a variable, and passed into the Student class when creating student objects. To do so, add another parameter in the __init__() function:")
-
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN and dialactive:
-                        dialactive = False        
 
             keys = pygame.key.get_pressed()
             if keys[pygame.K_UP]:

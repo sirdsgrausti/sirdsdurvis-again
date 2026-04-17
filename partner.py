@@ -15,13 +15,13 @@ class Partner(Player):   # yeyeyeye finally stopped being scared of super().__in
 
     def animate(self):
         chrspritesheet = Spritesheet('assets/stellasheet.png')
-        gg = chrspritesheet.parse_sprite("stidle.png")
-        gg1 = pygame.transform.flip(gg, True, False)  # still have no clue why this is so dumb
+        rightface = chrspritesheet.parse_sprite("stidle.png")
+        leftface = pygame.transform.flip(rightface, True, False)  # still have no clue why this is so dumb
 
         if self.state == 'moving left':
-            self.current_image = gg1
+            self.current_image = leftface
         else:
-            self.current_image = gg
+            self.current_image = rightface
 
     def load_frames(self):
         chrspritesheet = Spritesheet('assets/stellasheet.png')

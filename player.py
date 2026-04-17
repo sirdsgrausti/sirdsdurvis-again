@@ -12,6 +12,8 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.idle_frames_right[0].get_rect()
         self.current_frame = 0
         self.last_updated = 0
+        self.coins = 0
+        self.lives = 12
 
         self.position = pygame.math.Vector2(self.ST_POS, self.ST_POS)
         self.velocity = pygame.math.Vector2(0, 0)

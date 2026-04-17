@@ -51,13 +51,11 @@ class SpeakerBox:
         self.wraptext(screen, self.text, text_x, text_y)
 
     def wraptext(self, screen, text, x, y):
-
         maxw = self.rect.width - (x - self.rect.x) - self.padding
         words = text.split(" ")
 
         lines = []
         current = "" 
-
         for w in words:
             test = current + w + " "
             width = self.font.size(test)[0]

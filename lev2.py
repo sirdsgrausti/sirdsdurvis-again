@@ -1,5 +1,5 @@
 import pygame
-from tiles import *
+from tilemaps.tiles import *
 from spritesheet import Spritesheet
 from player import Player
 from npcs import *
@@ -16,7 +16,7 @@ clock = pygame.time.Clock()
 pygame.init()
 spritesheet = Spritesheet('assets/sprshnew.png')
 player = Player()
-tile_map = TileMap('mazel.csv', spritesheet)
+tile_map = TileMap('tilemaps/mazel.csv', spritesheet)
 player.position.x, player.position.y = 80, 80
 camera_x = 0
 camera_y = 0

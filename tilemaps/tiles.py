@@ -60,7 +60,7 @@ class TileMap():
                 elif tile == '4':
                     self.goals.append(Goal(tx, ty))
                 elif tile == '5':
-                    self.enemies.append(Enemy(tx, ty))
+                    self.enemies.append(Enemy(tx, ty))   # looks like i need to change the enemy mechanic before the day ends
                 x += 1
             y += 1
 

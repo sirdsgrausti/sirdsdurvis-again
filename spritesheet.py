@@ -1,8 +1,6 @@
 import pygame
 import json
 
-# this thing is suppposed to turn my json stuff into a usable class for spritesheets
-
 class Spritesheet:
     def __init__(self, filename):
         self.filename = filename
