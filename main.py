@@ -6,8 +6,28 @@ from npcs import *
 from partner import Partner
 from cutscenebutton import SpeakerBox
 
-START_POS_PL = (0,0)
-START_POS_PA = (8, 0)
+START_POS_PL = (0,5)
+START_POS_PA = (8, 5) # they just fall and i ont like it
+
+class MenuNode:
+    def __init__(self, text):
+        self.text = text
+        self.next = None
+        self.prev = None
+
+def buildmenu():
+    menu = MenuNode("<-   return to menu   ->")
+    sound = MenuNode("<-   toggle sound    ->")
+    quitn = MenuNode("<-       quit       ->") 
+
+    menu.next = sound
+    sound.next = quitn
+    quitn.next = menu
+
+    menu.prev = quitn
+    sound.prev = menu
+    quitn.prev = sound
+    return menu
 
 class Game:
     def __init__(self):
@@ -64,7 +84,7 @@ class Game:
         title = self.title_font.render("CREDITS", True, "white")
         credit1 = self.small_font.render("Game by Saule", True, "cornsilk")
         credit2 = self.small_font.render("Supported by Kārlis Cīmurs and Dāvids Paičs (kinda)", True, "cornsilk")
-        credit3 = self.small_font.render("Certified Clanker-Free as of v17/04/26", True, "cornsilk")
+        credit3 = self.small_font.render("Clanker-Free as of v17/04/26", True, "cornsilk")
         backtext = self.small_font.render("Press C to go back", True, "cornsilk")
 
         self.canvas.blit(title, (self.DISPLAY_W//2 - title.get_width()//2, 150))
@@ -93,6 +113,10 @@ class Game:
         dialogue = SpeakerBox(100, (self.DISPLAY_H - 220), (self.DISPLAY_W - 200), 180, self.chara_font)
         dialactive = False
 
+        pauseimg = pygame.image.load("assets/pausescreen.png")
+        paused = False
+        current = buildmenu()
+
         player.position.x, player.position.y = START_POS_PL
         player.rect.midbottom = START_POS_PL
         player.velocity.xy = (0, 0)
@@ -116,15 +140,15 @@ class Game:
             camera_x = player.rect.centerx - self.DISPLAY_W // 2
             camera_y = player.rect.centery - self.DISPLAY_H // 2
 
-            tile_map.draw_map(self.canvas, offset_x=-camera_x, offset_y=-camera_y)
-            player.draw(self.canvas, offset_x=-camera_x, offset_y=-camera_y)
-            partner.draw(self.canvas, offset_x=-camera_x, offset_y=-camera_y)
+            tile_map.draw_map(self.canvas, -camera_x, -camera_y)    # just realised howd dumb the offset variables were roflmao
+            player.draw(self.canvas, -camera_x, -camera_y)
+            partner.draw(self.canvas, -camera_x, -camera_y)
 
             for c in coins:
-                c.draw(self.canvas, offset_x=-camera_x, offset_y=-camera_y)
+                c.draw(self.canvas, -camera_x, -camera_y)
 
             for g in goals:
-                g.draw(self.canvas, offset_x=-camera_x, offset_y=-camera_y)
+                g.draw(self.canvas, -camera_x, -camera_y)
 
             hud.draw_lives(self.canvas, player.lives)
             hud.draw_coins(self.canvas, player.coins)
@@ -156,35 +180,43 @@ class Game:
                 if player.rect.colliderect(c.rect):
                     coins.remove(c)
                     player.coins += 1
-                    partner.coins += 1
+                    # partner.coins += 1
 
             for g in goals:
                 if player.rect.colliderect(g.rect):
-                    self.state = "lev2"
+                    self.state = "menu"
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
                     self.state = None
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT:
-                        player.LEFT_KEY = True
-                    elif event.key == pygame.K_RIGHT:
-                        player.RIGHT_KEY = True
-                    elif event.key == pygame.K_a:
-                        partner.LEFT_KEY = True
-                    elif event.key == pygame.K_d:
-                        partner.RIGHT_KEY = True
+                    if event.key == pygame.K_p:
+                        paused = not paused
+                    elif paused:
+                        if event.key == pygame.K_RIGHT:
+                            current = current.next
+                        elif event.key == pygame.K_LEFT:
+                            current = current.prev
+                        elif event.key == pygame.K_RETURN:
+                            print("not yet")
+
+                    else:
+                        if event.key == pygame.K_LEFT:
+                            player.LEFT_KEY = True
+                        elif event.key == pygame.K_RIGHT:
+                            player.RIGHT_KEY = True
+                        elif event.key == pygame.K_a:
+                            partner.LEFT_KEY = True
+                        elif event.key == pygame.K_d:
+                            partner.RIGHT_KEY = True
 
                     if event.key == pygame.K_e:
                         import SpareParts.stellalogue
-                        dialactive = True
+                        dialactive = not dialactive # i love NOT,,xd
                         dialogue.speakerchoice(1)
                         bub = "post1"
                         dialogue.textset(SpareParts.stellalogue.stellaspeech[bub])
-                        
-                    if event.key == pygame.K_RETURN and dialactive:
-                        dialactive = False        
 
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT:
@@ -196,11 +228,23 @@ class Game:
                     elif event.key == pygame.K_d:
                         partner.RIGHT_KEY = False
 
-            keys = pygame.key.get_pressed()
+            keys = pygame.key.get_pressed()         # still as weird and clunky as it was in january. how nice!
             if keys[pygame.K_UP]:
                 player.jump()
             if keys[pygame.K_w]:
                 partner.jump()
+
+            # if not paused:
+            #     keys = pygame.key.get_pressed()
+            #     if keys[pygame.K_UP]:             # if i get rid of this, he can still jump in SloMo :-) not a bug. feature.
+            #         player.jump()
+            #     if keys[pygame.K_w]:
+            #         partner.jump()
+
+            if paused:
+                self.canvas.blit(pauseimg, (0, 0))
+                text = self.menu_font.render(current.text, True, "cornsilk")
+                self.canvas.blit(text, (self.DISPLAY_W//2 - text.get_width()//2, 350))
 
             self.window.blit(self.canvas, (0, 0))
             pygame.display.update()

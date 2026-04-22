@@ -10,6 +10,8 @@ class FBLevel(Game):
         super().__init__()
         self.bg = pygame.image.load("assets/lowkeybg.jpg")
         self.state = "playing1"
+        if pygame.key.get_pressed()[pygame.K_ESCAPE]:  # this just restarts the level. how sad!!! must implement SAVE FILES.
+            self.state = "menu"
 
     def menu(self):
         while self.state == "menu":
@@ -30,7 +32,7 @@ class FBLevel(Game):
                     self.state = None
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
-                        self.state = "playing"
+                        self.state = "playing1"
                     elif event.key == pygame.K_c:
                         self.state = "credits"
                     elif event.key == pygame.K_ESCAPE:
