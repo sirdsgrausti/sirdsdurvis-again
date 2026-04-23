@@ -14,13 +14,13 @@ class Entity(pygame.sprite.Sprite):
 
 class Goal(Entity):
     def __init__(self, x, y):
-        super().__init__(x, y, 32, 32) # This is just an entity with a goal icon thing. like a key but .. different.. 
+        super().__init__(x, y, 32, 32) 
         self.image = pygame.image.load("assets/goalstar.png")
 
 class Enemy(Entity):
     def __init__(self, x, y):
         super().__init__(x, y, 32, 32)
-        self.image = pygame.image.load("assets/enemy.png")
+        self.image = pygame.image.load("assets/enemy.png")  # easy enemy lol
 
 class Coin(Entity):
     def __init__(self, x, y):
@@ -43,3 +43,61 @@ class HUD:
         text = font.render(f"Keys: {coins}", True, "white")
         surface.blit(text, (10, 50))
 
+class AnnoyingEnemy:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.cell_size = 12
+        self.image = pygame.image.load("assets/whitemodule.png").convert_alpha()
+
+        self.grid = [[0 for ugh in range(5)] for ugh in range(5)] #thank my coding teachers for the beauty that is 2d arrays
+        self.timer = 0
+        self.changeinterval = 1000 # time in milliseconds feels funny
+        self.rect = pygame.Rect(self.x, self.y, 5*self.cell_size, 5*self.cell_size)
+        self.mix()
+
+    def mix(self):
+        for r in range(5):
+            for c in range(5):
+                self.grid[r][c] = random.choice([0, 1])
+
+    def update(self, dt, player):
+        self.timer += dt * 1000
+        if self.timer >= self.changeinterval:
+            self.timer = 0
+            self.mix()
+
+        dx = player.rect.centerx - self.rect.centerx
+        dy = player.rect.centery - self.rect.centery
+
+        dist = (dx*dx + dy*dy) ** 0.5     # weird way to get sqrt without importing math. pythagoras!!
+        if dist != 0: # dont divide by zero 
+            dx /= dist
+            dy /= dist    # it follows the creature (thanks, classmates!)
+        speed = 0.5
+
+        self.x += dx * speed
+        self.y += dy * speed
+
+        # # self.x += random.randint(-1, 1)  # i made it annoying
+        # # self.y += random.randint(-1, 1)
+        self.rect.topleft = (self.x, self.y)
+
+        for r in range(5):
+            for c in range(5):  # even more annoying xD
+                if self.grid[r][c] == 1:
+                    px = self.x + c*5
+                    py = self.y + r*5
+                    particlerect = pygame.Rect(px, py, self.cell_size, self.cell_size)
+                    if particlerect.colliderect(player.rect):
+                        if player.coins > 0:
+                            player.coins -= 1
+                        return  # prevent succcccking out all his keys/coins/whatevs in one frame
+
+    def draw(self, surface, offset_x=0, offset_y=0):
+        for ii in range(5):
+            for iii in range(5):
+                if self.grid[ii][iii] == 1:
+                    px = self.x + ii * self.cell_size + offset_x
+                    py = self.y + iii * self.cell_size + offset_y
+                    surface.blit(self.image, (px, py))

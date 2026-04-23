@@ -22,11 +22,11 @@ class SpeakerBox:
         self.box = pygame.image.load("assets/input.png")
 
     def speakerchoice(self, chara):
-        if chara == 1:
+        if chara == 2:
         #     self.icon = pygame.image.load("chrtalksprite.png").convert_alpha()   blocked out while assets arent done. lazy lazy me.
         # elif chara == 2:
-        #     self.icon = pygame.image.load("steltalksprite.png").convert_alpha()
-        # elif chara == 3:
+            self.icon = pygame.image.load("assets/steltalksprite.png").convert_alpha()
+        elif chara == 1:
             self.icon = pygame.image.load("assets/qmarktalk.png").convert_alpha()
 
         self.chara = chara

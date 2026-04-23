@@ -18,7 +18,7 @@ screen = pygame.display.set_mode((900, 600), pygame.RESIZABLE)
 clock = pygame.time.Clock()
 
 # # why convert? for faster pixel/colour access
-image = pygame.image.load("yeurgh.png").convert()
+image = pygame.image.load("assets/newlev.png").convert()
 width, height = image.get_size()
 
 # 0 = seethrough/walkable, 1 = HARD!
@@ -36,11 +36,13 @@ for y in range(height):    # my fav part :-) the outer shell makes the thing ite
             row.append(3) # key
                         
         elif colour.r == 0 and colour.g == 0 and colour.b == 255:
-            row.append(4) # this thing would be an item thing? i still haven; t decided how to render thsoe
+            row.append(4) # goalpost
+        elif colour.r == 255 and colour.g == 0 and colour.b == 255:
+            row.append(5) # enemy, not of the annoing variety
         else:
             row.append(0)  # not wall not field
     game_map.append(row)
-    np.savetxt('yeurgh.csv', game_map, delimiter=",", fmt='%s')
+    np.savetxt('tilemaps/newlev.csv', game_map, delimiter=",", fmt='%s')
 
 running = True
 while running:

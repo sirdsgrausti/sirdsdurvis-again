@@ -5,6 +5,8 @@ from player import Player
 from npcs import *
 from partner import Partner
 from cutscenebutton import SpeakerBox
+from cutscene import *
+from SpareParts.startsceneblabber import *   
 
 START_POS_PL = (0,5)
 START_POS_PA = (8, 5) # they just fall and i ont like it
@@ -39,6 +41,7 @@ class Game:
         icon = pygame.image.load("assets/chrisstar.png")
         self.clock = pygame.time.Clock()
         self.running = True
+        self.cutscene = None
         self.state = "menu"
         self.title_font = pygame.font.SysFont("Cambria", 100, True)
         self.menu_font = pygame.font.SysFont("Cambria", 60)
@@ -67,7 +70,8 @@ class Game:
                 self.state = None
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    self.state = "lev1"
+                    self.cutscene = Cutscene(self, SpeakerBox(100, (self.DISPLAY_H - 220), (self.DISPLAY_W - 200), 180, self.chara_font), STARTTEXT)
+                    self.state = "cutscene"
                 elif event.key == pygame.K_c:
                     self.state = "credits"
                 elif event.key == pygame.K_ESCAPE:
@@ -84,7 +88,7 @@ class Game:
         title = self.title_font.render("CREDITS", True, "white")
         credit1 = self.small_font.render("Game by Saule", True, "cornsilk")
         credit2 = self.small_font.render("Supported by Kārlis Cīmurs and Dāvids Paičs (kinda)", True, "cornsilk")
-        credit3 = self.small_font.render("Clanker-Free as of v17/04/26", True, "cornsilk")
+        credit3 = self.small_font.render("Author wrote the code herself and didn't pay anyone", True, "cornsilk")
         backtext = self.small_font.render("Press C to go back", True, "cornsilk")
 
         self.canvas.blit(title, (self.DISPLAY_W//2 - title.get_width()//2, 150))
@@ -104,11 +108,25 @@ class Game:
         self.window.blit(self.canvas, (0, 0))
         pygame.display.update()
 
+    def cutsceneloop(self):
+        scenebg = pygame.image.load("assets/start.png").convert()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+                self.state = None
+            elif event.type == pygame.KEYDOWN:
+                self.cutscene.update(event)
+        self.canvas.blit(scenebg, (0, 0))
+        if self.cutscene:
+            self.cutscene.draw(self.canvas)
+        self.window.blit(self.canvas, (0, 0))
+        pygame.display.update()
+
     def lev1(self):
         spritesheet = Spritesheet('nnnn.png')
         player = Player()
         partner = Partner()
-        tile_map = TileMap("tilemaps/branchlev.csv", spritesheet)
+        tile_map = TileMap("tilemaps/newlev.csv", spritesheet)
 
         dialogue = SpeakerBox(100, (self.DISPLAY_H - 220), (self.DISPLAY_W - 200), 180, self.chara_font)
         dialactive = False
@@ -133,7 +151,8 @@ class Game:
         hud = HUD("assets/life.png")
         coins = tile_map.coins
         goals = tile_map.goals
-
+        enemies = tile_map.enemies
+        annoying = [AnnoyingEnemy(300, 300), AnnoyingEnemy(600, 700), AnnoyingEnemy(1000,1200)]
         while self.state == "lev1":
             self.canvas.blit(self.bg, (0,0))
 
@@ -144,11 +163,17 @@ class Game:
             player.draw(self.canvas, -camera_x, -camera_y)
             partner.draw(self.canvas, -camera_x, -camera_y)
 
+            for a in annoying:
+                a.draw(self.canvas, -camera_x, -camera_y)
+
             for c in coins:
                 c.draw(self.canvas, -camera_x, -camera_y)
 
             for g in goals:
                 g.draw(self.canvas, -camera_x, -camera_y)
+            
+            for e in enemies:
+                e.draw(self.canvas, -camera_x, -camera_y)
 
             hud.draw_lives(self.canvas, player.lives)
             hud.draw_coins(self.canvas, player.coins)
@@ -184,7 +209,27 @@ class Game:
 
             for g in goals:
                 if player.rect.colliderect(g.rect):
-                    self.state = "menu"
+                    self.cutscene = Cutscene(self, SpeakerBox(100, (self.DISPLAY_H - 220), (self.DISPLAY_W - 200), 180, self.chara_font), ENDTEXT)
+                    self.state = "endscene"
+
+            for e in enemies:
+                if player.rect.colliderect(e.rect):
+                    if not hasattr(player, "cooldown"): # look at this new funny thing i found on stackexchange and w3schools!!! xD ha satter. has attribute.
+                        player.cooldown = 0
+
+                    if player.cooldown <= 0:
+                        if player.coins > 0:
+                            player.coins -= 1
+                        player.cooldown = 30  # frames
+                    # if player.coins > 0:
+                    #     player.coins -= 1
+                    #     break  # prevent succcccking out all his keys/coins/whatevs in one frame
+
+            if hasattr(player, "cooldown") and player.cooldown > 0:
+                player.cooldown -= 1
+
+            for a in annoying:
+                a.update(dt, player)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -199,7 +244,15 @@ class Game:
                         elif event.key == pygame.K_LEFT:
                             current = current.prev
                         elif event.key == pygame.K_RETURN:
-                            print("not yet")
+                            if "return to menu" in current.text:
+                                self.state = "menu"
+                                paused = False
+                            elif "quit" in current.text:
+                                self.running = False
+                                self.state = None
+                                paused = False
+                            elif "toggle sound" in current.text:
+                                print("not yet")
 
                     else:
                         if event.key == pygame.K_LEFT:
@@ -216,7 +269,7 @@ class Game:
                         dialactive = not dialactive # i love NOT,,xd
                         dialogue.speakerchoice(1)
                         bub = "post1"
-                        dialogue.textset(SpareParts.stellalogue.stellaspeech[bub])
+                        dialogue.textset(SpareParts.stellalogue.stellaspeech[bub]) # had stuff planned but didnt do it bcs dialogue is not really necessary here
 
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT:
@@ -257,6 +310,10 @@ class Game:
                 self.credits()
             elif self.state == "lev1":
                 self.lev1()
+            elif self.state == "cutscene":
+                self.cutsceneloop()
+            elif self.state == "endscene":
+                self.cutsceneloop()
             else:
                 self.running = False
         pygame.quit()
