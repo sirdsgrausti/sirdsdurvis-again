@@ -73,7 +73,7 @@ class AnnoyingEnemy:
         dist = (dx*dx + dy*dy) ** 0.5     # weird way to get sqrt without importing math. pythagoras!!
         if dist != 0: # dont divide by zero 
             dx /= dist
-            dy /= dist    # it follows the creature (thanks, classmates!)
+            dy /= dist    # it follows the player, doesnt accelerate, division normaliseds my thing bcs thes are vectors
         speed = 0.5
 
         self.x += dx * speed
@@ -90,14 +90,14 @@ class AnnoyingEnemy:
                     py = self.y + r*5
                     particlerect = pygame.Rect(px, py, self.cell_size, self.cell_size)
                     if particlerect.colliderect(player.rect):
-                        if player.coins > 0:
+                        if player.coins > 0: # i put the mechanic in here because cross-file stuff is AWFUL imo
                             player.coins -= 1
                         return  # prevent succcccking out all his keys/coins/whatevs in one frame
 
     def draw(self, surface, offset_x=0, offset_y=0):
-        for ii in range(5):
-            for iii in range(5):
-                if self.grid[ii][iii] == 1:
-                    px = self.x + ii * self.cell_size + offset_x
-                    py = self.y + iii * self.cell_size + offset_y
+        for r in range(5):
+            for c in range(5):
+                if self.grid[r][c] == 1:
+                    px = self.x + r * self.cell_size + offset_x
+                    py = self.y + c * self.cell_size + offset_y #legibilitys sake made me change ii and iii to r and c
                     surface.blit(self.image, (px, py))

@@ -8,8 +8,8 @@ from cutscenebutton import SpeakerBox
 from cutscene import *
 from SpareParts.startsceneblabber import *   
 
-START_POS_PL = (0,5)
-START_POS_PA = (8, 5) # they just fall and i ont like it
+START_POS_PL = (0,0)
+START_POS_PA = (8, 0) # they just fall and i ont like it
 
 class MenuNode:
     def __init__(self, text):
@@ -34,6 +34,11 @@ def buildmenu():
 class Game:
     def __init__(self):
         pygame.init()
+        pygame.mixer.init()
+        self.musicon = True
+        pygame.mixer.music.load("hallthemoon.wav")  
+        pygame.mixer.music.set_volume(0.2)
+        pygame.mixer.music.play(-1) #loop forevvvs xd
         self.DISPLAY_W, self.DISPLAY_H = 1200, 800
         self.canvas = pygame.Surface((1920, 1080))
         self.window = pygame.display.set_mode((self.DISPLAY_W, self.DISPLAY_H), pygame.RESIZABLE)
@@ -48,13 +53,13 @@ class Game:
         self.small_font = pygame.font.SysFont("Cambria", 40)
         self.chara_font = pygame.font.SysFont("Cambria", 28)
         pygame.display.set_icon(icon)
-        pygame.display.set_caption("H")
+        pygame.display.set_caption("Salient Falls - Find Stella's keys")
    
     def menu(self):
         self.canvas.fill((0, 0, 0))
         self.canvas.blit(self.bg, (0,0))
 
-        title = self.title_font.render("H", True, "white")
+        title = self.title_font.render("SALIENT FALLS", True, "white")
         start_text = self.menu_font.render("Press ENTER to Start", True, "cornsilk")
         credits_text = self.menu_font.render("Press C for Credits", True, "cornsilk")
         quit_text = self.menu_font.render("Press ESC to Quit", True,"cornsilk")
@@ -86,9 +91,9 @@ class Game:
         self.canvas.blit(self.bg, (0,0))
 
         title = self.title_font.render("CREDITS", True, "white")
-        credit1 = self.small_font.render("Game by Saule", True, "cornsilk")
-        credit2 = self.small_font.render("Supported by Kārlis Cīmurs and Dāvids Paičs (kinda)", True, "cornsilk")
-        credit3 = self.small_font.render("Author wrote the code herself and didn't pay anyone", True, "cornsilk")
+        credit1 = self.small_font.render("Game code and assets by Terēze Saule", True, "cornsilk")
+        credit2 = self.small_font.render("Thanks to Kārlis and Dāvids for being awesome and encouraging", True, "cornsilk")
+        credit3 = self.small_font.render("Music by Isaac Hall (free to use)", True, "cornsilk")
         backtext = self.small_font.render("Press C to go back", True, "cornsilk")
 
         self.canvas.blit(title, (self.DISPLAY_W//2 - title.get_width()//2, 150))
@@ -152,7 +157,7 @@ class Game:
         coins = tile_map.coins
         goals = tile_map.goals
         enemies = tile_map.enemies
-        annoying = [AnnoyingEnemy(300, 300), AnnoyingEnemy(600, 700), AnnoyingEnemy(1000,1200)]
+        annoying = [AnnoyingEnemy(300, 800), AnnoyingEnemy(600, 700), AnnoyingEnemy(1000,1200), AnnoyingEnemy(2000,1700)]
         while self.state == "lev1":
             self.canvas.blit(self.bg, (0,0))
 
@@ -202,7 +207,7 @@ class Game:
                     partner.velocity.xy = (0, 0)
 
             for c in coins[:]:
-                if player.rect.colliderect(c.rect):
+                if player.rect.colliderect(c.rect) or partner.rect.colliderect(c.rect):
                     coins.remove(c)
                     player.coins += 1
                     # partner.coins += 1
@@ -220,7 +225,11 @@ class Game:
                     if player.cooldown <= 0:
                         if player.coins > 0:
                             player.coins -= 1
-                        player.cooldown = 30  # frames
+                        player.cooldown = 300  # frames
+                        if player.coins == 0:
+                            player.position.x, player.position.y = START_POS_PL
+                            player.rect.midbottom = START_POS_PL
+
                     # if player.coins > 0:
                     #     player.coins -= 1
                     #     break  # prevent succcccking out all his keys/coins/whatevs in one frame
@@ -250,9 +259,15 @@ class Game:
                             elif "quit" in current.text:
                                 self.running = False
                                 self.state = None
-                                paused = False
+                                # paused = False
                             elif "toggle sound" in current.text:
-                                print("not yet")
+                                if self.musicon:
+                                    pygame.mixer.music.pause()
+                                    self.musicon = False
+                                else:
+                                    pygame.mixer.music.unpause()
+                                    self.musicon = True
+                                # self.musicon = not self.musicon
 
                     else:
                         if event.key == pygame.K_LEFT:
@@ -298,6 +313,7 @@ class Game:
                 self.canvas.blit(pauseimg, (0, 0))
                 text = self.menu_font.render(current.text, True, "cornsilk")
                 self.canvas.blit(text, (self.DISPLAY_W//2 - text.get_width()//2, 350))
+                
 
             self.window.blit(self.canvas, (0, 0))
             pygame.display.update()
@@ -310,10 +326,10 @@ class Game:
                 self.credits()
             elif self.state == "lev1":
                 self.lev1()
-            elif self.state == "cutscene":
+            elif self.state == "cutscene" or self.state == "endscene":
                 self.cutsceneloop()
-            elif self.state == "endscene":
-                self.cutsceneloop()
+            # elif self.state == "endscene":
+            #     self.cutsceneloop()
             else:
                 self.running = False
         pygame.quit()

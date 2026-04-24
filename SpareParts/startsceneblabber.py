@@ -4,7 +4,7 @@ STARTTEXT = {
         "next": "line2"
     },
     "line2": {
-        "text": "Salient Falls is a nice place to be, yes, but those awful Stavomites scattered my keys all over the place! If you see a pointy star thing with a weird face, that's the thing.",
+        "text": "Salient Falls is a nice place to be, yes, but those awful Stavomites scattered my keys all over the place! If you see a pointy star thing with a weird face, that's the thing. (Use arrow keys to control the player)",
         "next": "line3"
     },
     "line3": {
@@ -12,7 +12,7 @@ STARTTEXT = {
         "next": "line4"
     },
     "line4": {
-        "text": "Watch out for the Stavomites lurking in your path. Those don't move.",
+        "text": "Watch out for the Stavomites lurking in your path. Those don't move. (If you want to take a break, press P. To unpause, press P again.)",
         "next": "line5"
     },
     "line5": {
